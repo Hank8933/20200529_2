@@ -1,0 +1,348 @@
+1: 合法，因為x跟y是struct中的member，所以不衝突
+
+2: 
+a: 
+struct{
+    double real, imaginary;
+} c1, c2, c3;
+b: 
+struct{
+    double real, imaginary;
+} c1 = {0, 1}, c2 = {1, 0}, c3;
+c: 
+c1 = c2;
+d:
+c3.real = c1.real + c2.real;
+c3.imaginary = c1.imaginary + c2.imaginary;
+
+3:
+a:
+struct complex {
+    double real, imaginary;
+};
+b: struct complex c1, c2, c3;
+c:
+struct complex make_complex(double a, double b)
+{
+    return (struct complex) { a, b };
+}
+d:
+struct complex add_complex(struct complex a, struct complex b)
+{
+    struct complex c;
+    c.real = a.real + b.real;
+    c.imaginary = a.imaginary + b.imaginary;
+    return c;
+}
+
+4: 
+a:
+typedef struct {
+    double real, imaginary;
+} Complex;
+b: Complex c1, c2, c3;
+c:
+Complex make_complex(double a, double b)
+{
+    return (Complex) { a, b };
+}
+d: 
+add_complex(Complex a, Complex b)
+{
+    Complex c;
+    c.real = a.real + b.real;
+    c.imaginary = a.imaginary + b.imaginary;
+    return c;
+}
+
+5: 
+a:
+int day_of_year(struct date d)
+{
+    int month_days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (d.year % 4 == 0){
+        if (d.year % 100 == 0){
+            if (d.year % 400 == 0) month_days[1] = 29;
+        }
+        else month_days[1] = 29;
+    }
+
+    for (int i = 0; i < d.month - 1; i++)
+        d.day += month_days[i];
+
+    return d.day;
+}
+b:
+int compare_dates(struct date d1, struct date d2)
+{
+    if (d1.year < d2.year) return -1;
+    else if (d1.year > d2.year) return 1;
+    else if (d1.month < d2.month) return -1;
+    else if (d1.month > d2.month) return 1;
+    else if (d1.day < d2.day) return -1;
+    else if (d1.day > d2.day) return 1;
+    else return 0;
+}
+
+6:
+struct time split_time(long total_seconds)
+{
+    struct time t;
+    t.seconds = total_seconds % 60;
+    t.minutes = total_seconds / 60;
+    t.hours = total_seconds / 360;
+    return t;
+}
+
+7:
+a:
+int GCD(int a, int b) {
+	if(b) while((a %= b) && (b %= a));
+	return a + b;
+}
+
+struct fraction reduce(struct fraction f)
+{
+    int gcd = GCD(f.numerator, f.denominator);
+    f.numerator /= gcd;
+    f.denominator /= gcd;
+    return f;
+}
+b:
+#define FracFun(tag, a, b) \
+struct fraction tag(struct fraction f1, struct fraction f2)\
+{\
+    struct fraction ans = {\
+        a, b\
+    };\
+    return reduce(ans);\
+}
+
+FracFun(add, f1.numerator * f2.denominator + f2.numerator * f1.denominator,
+             f1.denominator * f2.denominator)
+c:
+FracFun(subtract, f1.numerator * f2.denominator - f2.numerator * f1.denominator,
+                  f1.denominator * f2.denominator)
+d:
+FracFun(multpy, f1.numerator * f2.numerator,
+                f1.denominator * f2.denominator)
+e:
+FracFun(divide, f1.numerator * f2.denominator,
+                f1.denominator * f2.numerator)
+
+8:
+a:
+const struct color MAGENTA = {255, 0, 255};
+b:
+const struct color MAGENTA = {.red = 255, .blue = 255};
+
+9:
+a:
+struct color make_color(int red, int green, int blue)
+{
+    struct color c = { 
+	red   < 0 ? 0 : red   > 255 ? 255 : red,
+	green < 0 ? 0 : green > 255 ? 255 : green,
+	blue  < 0 ? 0 : blue  > 255 ? 255 : blue 
+	};
+	return c;
+}
+b:
+int getRed(struct color c)
+{
+    return c.red;
+}
+c:
+bool equal_color(struct color color1, struct color color2)
+{
+    if (color1.red   == color2.red   &&
+        color1.green == color2.green &&
+        color1.blue  == color2.blue)
+        return true;
+    else return false;
+}
+d:
+#define colFun(tag, op)\
+struct color tag(struct color c)\
+{\
+    if (c.red == 0 && c.green == 0 && c.blue == 0)\
+        return (struct color) { 3, 3, 3 };\
+    c.red   = ((c.red   > 0 && c.red   < 3) ? 3 : c.red  ) op 0.7;\
+    c.green = ((c.green > 0 && c.green < 3) ? 3 : c.green) op 0.7;\
+    c.blue  = ((c.blue  > 0 && c.blue  < 3) ? 3 : c.blue ) op 0.7;\
+    if (c.red   > 255) c.red   = 255;\
+    if (c.green > 255) c.green = 255;\
+    if (c.blue  > 255) c.blue  = 255;\
+    return c;\
+}
+colFun(brighter, /)
+e:
+colFun(darker, *)
+
+10:
+a:
+int area(struct rectangle r)
+{
+    return (r.upper_left.y  - r.lower_right.y) * (r.lower_right.x - r.upper_left.x);
+}
+b:
+struct point find_center(struct rectangle r)
+{
+    struct point c = {
+        r.lower_right.x / 2,
+        r.upper_left.y  / 2
+	}
+    return c;
+}
+c:
+struct rectangle move(struct rectangle r, int x, int y)
+{
+    r.upper_left.x += x;
+    r.upper_left.y += y;
+    r.lower_right.x += x;
+    r.lower_right.y += y;
+    return r;
+}
+d:
+_Bool isIn(struct point p, struct rectangle r)
+{
+    if (p.x >= r.upper_left.x && p.x <= r.lower_right.x &&
+        p.y <= r.upper_left.y && p.y >= r.lower_right.y)
+        return true;
+    return false;
+}
+
+11: 20 bytes
+
+12: 16 bytes
+
+13:
+a: legal
+b: legal
+c: s.u.rectangle.height = 25;
+d: legal
+e: s.u.circle.radius = 5;
+f: s.u.circle.radius = 5;
+
+14:
+a:
+int area(struct shape s)
+{
+    if (s.shape_kind == RECTANGLE)
+        return s.u.rectangle.height * s.u.rectangle.width;
+    return 3.14 * s.u.circle.radius * s.u.circle.radius;
+}
+b:
+struct shape move_shape(struct shape s, int x, int y)
+{
+    s.center.x += x;
+    s.center.y += y;
+    return s;
+}
+c:
+struct shape scale_shape(struct shape s, double c)
+{
+    if (s.shape_kind == RECTANGLE)
+    {
+        s.u.rectangle.height *= c;
+        s.u.rectangle.width *= c;
+    }
+    else s.u.circle.radius *= c;
+    return s;
+}
+
+15:
+a:
+enum day {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
+b:
+typedef enum {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY} day;
+
+16: 
+a: 對
+b: 錯，enum只在{}內作用
+c: 對
+d: 錯
+e: 對
+
+17:
+全合法
+a: safe
+b: i 可能超過範圍
+c: b 可能超過範圍
+d: safe
+e: safe
+
+18:
+a:
+typedef enum {E, P, R, K, B, Q, KI} Piece;
+typedef enum {W, B} Color;
+b:
+typedef struct {
+    Piece p;
+    Color c;
+} Square;
+c:
+Square board[8][8];
+d:
+Square board[8][8] =
+{{{R, W}, {K, B}, {B, W}, {KI, B},
+  {Q, B}, {B, W}, {K, B}, {R,  W}},
+ {{P, W}, {P, B}, {P, W}, {P,  B},
+  {P, B}, {P, W}, {P, B}, {P,  W}},
+ {{E, B}, {E, W}, {E, B}, {E,  W},
+  {E, W}, {E, B}, {E, W}, {E,  B}},
+ {{E, B}, {E, W}, {E, B}, {E,  W},
+  {E, W}, {E, B}, {E, W}, {E,  B}},
+ {{E, B}, {E, W}, {E, B}, {E,  W},
+  {E, W}, {E, B}, {E, W}, {E,  B}},
+ {{E, B}, {E, W}, {E, B}, {E,  W},
+  {E, W}, {E, B}, {E, W}, {E,  B}},
+ {{P, W}, {P, B}, {P, W}, {P,  B},
+  {P, B}, {P, W}, {P, B}, {P,  W}},
+ {{R, W}, {K, B}, {B, W}, {KI, B},
+  {Q, B}, {B, W}, {K, B}, {R,  W}}};
+
+19:
+struct pinball_machine {
+    char name[41];
+    int year;
+    enum {EM, SS} type;
+    int players;
+};
+
+20:
+switch (direction)
+{
+    case NORTH:
+        --y;
+        break;
+    case EAST:
+        ++x;
+        break;
+    case SOUTH:
+        ++y;
+        break;
+    case WEST:
+        --x;
+        break;
+};
+
+21:
+a: 0 1 2 3
+b: 11 12 13
+c: 14 15 16 24 25
+d: 45 46 47 37 38 39
+
+22:
+a:
+const int piece_value[] = {200, 9, 5, 3, 3, 1};
+b:
+const int piece_value[] = {
+    [KING] = 200,
+    [QUEEN] = 9,
+    [ROOK] = 5,
+    [BISHOP] = 3,
+    [KNIGHT] = 3,
+    [PAWN] = 1
+};
