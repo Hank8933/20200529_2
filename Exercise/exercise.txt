@@ -1,4 +1,4 @@
-1: 合法，因為x跟y是struct中的member，所以不衝突
+1: 合法，可以，因為x跟y是struct中的member，所以不衝突
 
 2: 
 a: 
@@ -24,7 +24,7 @@ b: struct complex c1, c2, c3;
 c:
 struct complex make_complex(double a, double b)
 {
-    return (struct complex) { a, b };
+    return (struct complex) {a, b};
 }
 d:
 struct complex add_complex(struct complex a, struct complex b)
@@ -44,10 +44,10 @@ b: Complex c1, c2, c3;
 c:
 Complex make_complex(double a, double b)
 {
-    return (Complex) { a, b };
+    return (Complex) {a, b};
 }
 d: 
-add_complex(Complex a, Complex b)
+Complex add_complex(Complex a, Complex b)
 {
     Complex c;
     c.real = a.real + b.real;
@@ -167,7 +167,7 @@ d:
 struct color tag(struct color c)\
 {\
     if (c.red == 0 && c.green == 0 && c.blue == 0)\
-        return (struct color) { 3, 3, 3 };\
+        return (struct color) {3, 3, 3};\
     c.red   = ((c.red   > 0 && c.red   < 3) ? 3 : c.red  ) op 0.7;\
     c.green = ((c.green > 0 && c.green < 3) ? 3 : c.green) op 0.7;\
     c.blue  = ((c.blue  > 0 && c.blue  < 3) ? 3 : c.blue ) op 0.7;\
@@ -286,22 +286,22 @@ c:
 Square board[8][8];
 d:
 Square board[8][8] =
-{{{R, W}, {K, B}, {B, W}, {KI, B},
-  {Q, B}, {B, W}, {K, B}, {R,  W}},
- {{P, W}, {P, B}, {P, W}, {P,  B},
-  {P, B}, {P, W}, {P, B}, {P,  W}},
- {{E, B}, {E, W}, {E, B}, {E,  W},
-  {E, W}, {E, B}, {E, W}, {E,  B}},
- {{E, B}, {E, W}, {E, B}, {E,  W},
-  {E, W}, {E, B}, {E, W}, {E,  B}},
- {{E, B}, {E, W}, {E, B}, {E,  W},
-  {E, W}, {E, B}, {E, W}, {E,  B}},
- {{E, B}, {E, W}, {E, B}, {E,  W},
-  {E, W}, {E, B}, {E, W}, {E,  B}},
- {{P, W}, {P, B}, {P, W}, {P,  B},
-  {P, B}, {P, W}, {P, B}, {P,  W}},
- {{R, W}, {K, B}, {B, W}, {KI, B},
-  {Q, B}, {B, W}, {K, B}, {R,  W}}};
+{{{R, W}, {K, W}, {B, W}, {KI, W},
+  {Q, W}, {B, W}, {K, W}, {R,  W}},
+ {{P, W}, {P, W}, {P, W}, {P,  W},
+  {P, W}, {P, W}, {P, W}, {P,  W}},
+ {{E, B}, {E, B}, {E, B}, {E,  B},
+  {E, B}, {E, B}, {E, B}, {E,  B}},
+ {{E, B}, {E, B}, {E, B}, {E,  B},
+  {E, B}, {E, B}, {E, B}, {E,  B}},
+ {{E, B}, {E, B}, {E, B}, {E,  B},
+  {E, B}, {E, B}, {E, B}, {E,  B}},
+ {{E, B}, {E, B}, {E, B}, {E,  B},
+  {E, B}, {E, B}, {E, B}, {E,  B}},
+ {{P, B}, {P, B}, {P, B}, {P,  B},
+  {P, B}, {P, B}, {P, B}, {P,  B}},
+ {{R, B}, {K, B}, {B, B}, {KI, B},
+  {Q, B}, {B, B}, {K, B}, {R,  B}}};
 
 19:
 struct pinball_machine {
